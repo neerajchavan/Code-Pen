@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface AdminRepository extends CrudRepository<Admin, Integer> {
      Optional<Admin> getAdminById(Integer id);
+     Optional<Admin> findAdminByEmailAndAndPassword(String email, String password);
 }

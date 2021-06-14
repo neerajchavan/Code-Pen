@@ -1,30 +1,40 @@
 package com.compiler.codepen.controller;
 
+import com.compiler.codepen.entity.Code;
+import com.compiler.codepen.service.CodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
 @CrossOrigin
 public class CodeController {
 
+    @Autowired
+    private CodeService codeService;
+
     Logger log = LoggerFactory.getLogger(CodeController.class);
 
 
     @GetMapping("/test")
-    public String[] test(){
-        String arr[] = {"first","second"};
+    public String[] test() {
+        String arr[] = {"first", "second"};
         return arr;
     }
 
-    @PostMapping("/getsrc")
-    public List<String> getSrc(@RequestBody List<String> string){
-        log.info("HTML : "+string.get(0));
-        log.info("CSS : "+string.get(1));
-        log.info("JS : "+string.get(2));
-        return string;
+    @GetMapping("/get-code")
+    public Code getCode(){
+        return codeService.getCode();
+    }
+
+    @PostMapping("/submit-code")
+    public Code submitCode(@RequestBody Code code) {
+        log.info("HTML : " + code.getHtml());
+        log.info("CSS : " + code.getCss());
+        log.info("JS : " + code.getJs());
+
+        return codeService.addSubmission(code);
     }
 }

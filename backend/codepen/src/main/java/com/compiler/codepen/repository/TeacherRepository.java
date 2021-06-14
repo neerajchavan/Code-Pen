@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface TeacherRepository extends CrudRepository<Teacher, Integer> {
     List<Teacher> findAll();
     Optional<Teacher> findById(Integer id);
+    Optional<Teacher> findTeacherByEmailAndAndPassword(String email, String password);
 }

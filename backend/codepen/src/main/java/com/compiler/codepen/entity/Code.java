@@ -12,6 +12,9 @@ public class Code {
     @GeneratedValue
     private Integer id;
 
+    @ManyToOne
+    private Student student;
+
     @Column(name = "html_code")
     private String html;
 

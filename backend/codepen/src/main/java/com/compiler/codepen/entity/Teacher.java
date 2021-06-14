@@ -21,6 +21,7 @@ public class Teacher {
     private String lastName;
 
     private String email;
+    private String password;
     private String phoneNo;
 
     @Column(name = "department_id")

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Editor from './Editor'
 import useLocalStorage from '../hooks/useLocalStorage'
 import { Navbar } from './Navbar';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import { Login } from './Login';
 
 
 function App() {
@@ -15,9 +15,16 @@ function App() {
   const buttonClicked = () => {
       // Simple POST request with a JSON body using axios
       let htmlData = html;
-      const sendHtml = [htmlData, css, js];
-      console.log("SEND HTML : "+sendHtml);
-      axios.post('http://localhost:8080/getsrc', sendHtml)
+      let cssData = css;
+      let jsData = js;
+      let submitCode = {html:htmlData, css:cssData, js:jsData};
+      submitCode = JSON.stringify(submitCode);
+      console.log("SEND CODE : "+submitCode);
+
+      const header = {
+        'Content-Type': 'application/json',
+      }
+      axios.post('http://localhost:8080/submit-code', submitCode, {headers:header})
           .then(response => console.log(response))
           .catch(error => console.log(error));
   }
@@ -38,7 +45,7 @@ function App() {
 
   return (
     <>
-      <Navbar/>
+      {/* <Login/> */}
       <div className="pane top-pane">
         <Editor
           language="xml"
@@ -69,9 +76,8 @@ function App() {
           height="100%"
         />
       </div>
-      <div>
-        <input type="button" value="Send Data" onClick={buttonClicked}/>
-      </div>
+      
+      <input class="btn btn-info" onClick={buttonClicked} type="button" value="Submit Code"/>
     </>
   )
 }

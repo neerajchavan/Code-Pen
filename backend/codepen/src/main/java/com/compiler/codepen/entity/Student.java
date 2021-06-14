@@ -2,8 +2,10 @@ package com.compiler.codepen.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 @Data
@@ -21,6 +23,7 @@ public class Student {
     private String lastName;
 
     private String email;
+    private String password;
     private String phoneNo;
 
     @Column(name = "department_id")
@@ -29,6 +32,4 @@ public class Student {
     @Column(name = "department_name")
     private String departmentName;
 
-    @OneToMany
-    private List<Code> code;
 }
