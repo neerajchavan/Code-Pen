@@ -110,3 +110,8 @@ button{
 .login-button:hover{
   background-color :#17a2b8;
 }
+
+.add-assignment-form-container{
+  padding: auto;
+  margin: 50px 35vw;
+}
