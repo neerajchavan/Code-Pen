@@ -10,7 +10,7 @@ export const Login = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [userType, setUserType] = useState('ADMIN')
+    const [userType, setUserType] = useState('STUDENT')
     const [isErrorOccuered, setisErrorOccuered] = useState(false);
 
     async function loginClickedFetch() {
@@ -98,7 +98,6 @@ export const Login = () => {
                                     <span className="input-group-text"><i class="fa fa-lock"></i></span>
                                 </div>
                                 <select value={userType} onChange={userTypeClicked} className="form-control" id="exampleFormControlSelect2">
-                                    <option>ADMIN</option>
                                     <option>TEACHER</option>
                                     <option>STUDENT</option>
                                 </select>

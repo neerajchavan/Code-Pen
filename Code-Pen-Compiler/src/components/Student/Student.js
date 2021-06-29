@@ -12,6 +12,7 @@ import { Button } from 'react-bootstrap';
 import history from '../history'
 import { EditorPage } from './EditorPage';
 import { render } from '@testing-library/react';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 const useStyles = makeStyles({
   table: {
@@ -24,16 +25,17 @@ export const Student = () => {
 
   const classes = useStyles();
   let [rows, setRows] = useState([]);
+  let [teacherList, setTeacherList] = useState([]);
   let assignmentCounter = 1;
 
   useEffect(() => {
     getRowData();
-
+    getTeacherList();
   }, [])
 
   async function getRowData() {
     try {
-      const response = await fetch('http://localhost:8080/assignment/', {
+      const response = await fetch('http://localhost:8080/assignment', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -56,12 +58,41 @@ export const Student = () => {
     }
   }
 
-  async function passDataToEditorPage() {
+  async function getTeacherList() {
+    console.log("Fetching Teacher List For Select Staff : ")
     try {
-      const response = await fetch('http://localhost:8080/assignment/', {
+      const response = await fetch(`http://localhost:8080/teacher`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
+
+      console.log("RESPONSE : " + response)
+      const json = await response.json();
+      console.log("JSON : " + JSON.stringify(json))
+
+      console.log("RESPONSE STATUS : " + response.status);
+
+      if (response.status == 200) {
+        let teacherListCopy = [];
+        json.map(item => teacherListCopy.push(item))
+        setTeacherList(teacherListCopy);
+        console.log("Set Teacher List Success")
+      }
+    }
+    catch (error) {
+      console.error("Exception Occurred While Fetching Teacher List : " + error)
+    }
+  }
+
+  async function getAssignmentsByTeacher(teacherId) {
+    console.log("Fetching Assignment List By Teacher : " + teacherId)
+
+    try {
+      const response = await fetch(`http://localhost:8080/assignment/${teacherId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
 
       console.log("RESPONSE : " + response)
       const json = await response.json();
@@ -92,16 +123,31 @@ export const Student = () => {
   }
 
   let goToEditorPage = (id) => {
-      console.log("Go To Code Editor Page")
-      console.log(id)
-      let assignmentId = id;
-      history.push(`/editor-page/${assignmentId}`);
+    console.log("Go To Code Editor Page")
+    console.log(id)
+    let assignmentId = id;
+    history.push(`/editor-page/${assignmentId}`);
   }
 
   return (
     <>
       <NavbarStudent />
-      <h2 className="text-center text-dark m-5 font-weight-bolder">Show Assignment</h2>
+      <h2 className="text-center text-dark mt-5 font-weight-bolder">Show Assignment</h2>
+
+      <div className="mb-4">
+        <DropdownButton
+          drop='right'
+          variant="info"
+          title={`Select Staff`}
+        >
+          {teacherList.map((teacher) => (
+            <Dropdown.Item eventKey={teacher.id} onClick={() => { getAssignmentsByTeacher(teacher.id) }}>Prof {`${teacher.firstName} ${teacher.lastName}`}</Dropdown.Item>
+          ))}
+          <Dropdown.Divider />
+        </DropdownButton>
+      </div>
+
+
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
@@ -115,7 +161,6 @@ export const Student = () => {
               <TableCell>Playground</TableCell>
             </TableRow>
           </TableHead>
-          {console.log("Table Head : " + rows)}
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.id}>
@@ -127,16 +172,12 @@ export const Student = () => {
                 <TableCell>{row.startDate}</TableCell>
                 <TableCell>{row.endDate}</TableCell>
                 <TableCell><a href={row.websiteUrl}>demo</a></TableCell>
-                <TableCell><a href="" onClick={() => {goToEditorPage(row.id)}}>click to code</a></TableCell>
+                <TableCell><a href="" onClick={() => { goToEditorPage(row.id) }}>click to code</a></TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <div className="text-center">
-        <Button className="m-5" variant="btn btn-warning" onClick={showAssignmnet}>Show Assignment</Button>
-        <Button className="m-5" variant="btn btn-secondary" onClick={showAddAssignmnet}>Add Assignment</Button>
-      </div>
     </>
   );
 }

@@ -7,6 +7,9 @@ import { Student } from './Student/Student'
 import { EditorPage } from './Student/EditorPage'
 import { AddAssignment } from './Teacher/AddAssignment'
 import history from './history'
+import { ShowStudents } from './Teacher/ShowStudents'
+import { ShowStudentAssignments } from './Teacher/ShowStudentAssignments'
+import { ShowStudentAssignmentEditor } from './Teacher/ShowStudentAssignmentEditor'
 
 export default class Routes extends Component {
     render() {
@@ -17,9 +20,12 @@ export default class Routes extends Component {
                 <Route path="/admin" component={Admin} />
                 <Route exact path="/teacher" component={Teacher} />
                 <Route exact path="/teacher/add-assignment" component={AddAssignment} />
+                <Route exact path="/teacher/show-students" component={ShowStudents} />
                 <Route path="/student" component={Student} />
 
                 <Route path="/editor-page/:aId" component={EditorPage}/>
+                <Route path="/teacher/show-students-assignment/:aId/:fname/:lname" component={ShowStudentAssignments} />
+                <Route path="/teacher/show-student-assignment/:aId/:sId" component={ShowStudentAssignmentEditor} />
             </Switch>
         </Router>
         )

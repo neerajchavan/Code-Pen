@@ -15,6 +15,7 @@ export const AddAssignment = () => {
     const [totalMarks, setTotalMarks] = useState('');
     const [isErrorOccurred, setisErrorOccuered] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
+    let userData = JSON.parse(localStorage.getItem("userData"));
 
     let showAssignmentPage = () => {
         console.log("Show Assignment Page")
@@ -29,7 +30,7 @@ export const AddAssignment = () => {
         console.log("DATA : " + assignmentObj);
 
         try {
-            const response = await fetch('http://localhost:8080/assignment/add-assignment', {
+            const response = await fetch('http://localhost:8080/assignment/add-assignment/'+userData.id, {
                 method: 'POST',
                 body: assignmentObj,
                 headers: { 'Content-Type': 'application/json' }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Editor from './Editor'
+import Editor from '../Student/Editor'
 import useLocalStorage from '../../hooks/useLocalStorage'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -9,19 +9,19 @@ import { Alert } from 'react-bootstrap';
 
 
 
-export const EditorPage = ({ match }) => {
+export const ShowStudentAssignmentEditor = ({ match }) => {
 
   const [html, setHtml] = useState('')
   const [css, setCss] = useState('')
   const [js, setJs] = useState('')
   const [srcDoc, setSrcDoc] = useState('')
   let userData = JSON.parse(localStorage.getItem("userData"));
-  let studentId = userData.id;
-  // let {assignmentId} = useParams();
+  let studentId = match.params.sId;
+  let assiId = match.params.aId;
 
   async function getCode() {
     
-    let assignmentId = { id: parseInt(match.params.aId) };
+    let assignmentId = { id: parseInt(assiId) };
     console.log("STUDENT ID : " + studentId)
     let student = { id: studentId }
     let sendBody = { student, assignmentId };
@@ -54,33 +54,6 @@ export const EditorPage = ({ match }) => {
     }
   }
 
-  const saveButton = () => {
-  
-    let htmlData = html;
-    let cssData = css;
-    let jsData = js;
-    let assignmentId = { id: parseInt(match.params.aId) };
-
-    console.log("STUDENT ID : " + studentId)
-    let student = { id: studentId }
-
-    let submitCode = { html: htmlData, css: cssData, js: jsData, student, assignmentId };
-    submitCode = JSON.stringify(submitCode);
-    console.log("SEND CODE : " + submitCode);
-
-    let userData = JSON.parse(localStorage.getItem("userData"));
-
-    const header = {
-      'Content-Type': 'application/json',
-    }
-    axios.post('http://localhost:8080/submit-code/', submitCode, { headers: header })
-      .then(response => console.log(response))
-      .catch(error => console.log(error));
-
-    alert("Saved Successfully!")
-  }
-
-
   let logout = () => {
     localStorage.removeItem("userData");
     history.push('/');
@@ -88,6 +61,8 @@ export const EditorPage = ({ match }) => {
 
   useEffect(() => {
     getCode();
+    console.log("Student Id : "+studentId);
+    console.log("Assignment Id : "+assiId);
   }, [])
 
   useEffect(() => {
@@ -115,10 +90,6 @@ export const EditorPage = ({ match }) => {
             Signed in as: <a href="">{userData.firstName + " " + userData.lastName}</a>
           </Navbar.Text>
         </Navbar.Collapse>
-
-        <Navbar.Text className="mr-4">
-          <a href="" onClick={saveButton}><u className="h4">save</u></a>
-        </Navbar.Text>
 
         <Navbar.Text>
           <a href="" onClick={logout}>logout</a>

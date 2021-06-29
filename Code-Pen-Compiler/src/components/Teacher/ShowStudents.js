@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 });
 
 
-export const Teacher = () => {
+export const ShowStudents = () => {
 
   const classes = useStyles();
   let [rows, setRows] = useState([]);
@@ -31,9 +31,8 @@ export const Teacher = () => {
   }, [])
 
   async function getRowData() {
-    console.log("TEACHER ID : "+teacherId);
     try {
-      const response = await fetch(`http://localhost:8080/assignment/`+teacherId, {
+      const response = await fetch(`http://localhost:8080/student`,{
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -56,27 +55,10 @@ export const Teacher = () => {
     }
   }
 
-  async function deleteAssignment(id) {
-    console.log("Delete Assignment Clicked - ID : "+ id)
-    try {
-      const response = await fetch(`http://localhost:8080/assignment/`+id, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      console.log("RESPONSE : " + response)
-
-      console.log("RESPONSE STATUS : " + response.status);
-
-      if (response.status == 200) {
-       alert("Deleted Successfully!")
-      }
-    }
-    catch (error) {
-      console.log("CATCH : " + error)
-    }
+  async function viewStudentAssignments(sId,firstName,lastName){
+      console.log("STUDENT ID : "+sId)
+      history.push(`/teacher/show-students-assignment/${sId}/${firstName}/${lastName}`)
   }
-
 
   let showAssignmnet = () => {
     console.log("Show Assignment Clicked")
@@ -96,18 +78,16 @@ export const Teacher = () => {
   return (
     <>
       <NavbarTeacher />
-      <h2 className="text-center text-dark m-5 font-weight-bolder">Show Assignment</h2>
+      <h2 className="text-center text-dark m-5 font-weight-bolder">Student List</h2>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>No</TableCell>
-              <TableCell algin="left">Assignment</TableCell>
-              <TableCell algin="left">Total Marks</TableCell>
-              <TableCell>Created Date</TableCell>
-              <TableCell>Submission Date</TableCell>
-              <TableCell>Details</TableCell>
-              <TableCell>Delete</TableCell>
+              <TableCell align="center">Student Name</TableCell>
+              <TableCell align="center">Email Address</TableCell>
+              <TableCell align="center">Phone No</TableCell>
+              <TableCell align="center">View Assignments</TableCell>
             </TableRow>
           </TableHead>
           {console.log("Table Head : " + rows)}
@@ -115,14 +95,12 @@ export const Teacher = () => {
             {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{assignmentCounter++}</TableCell>
-                <TableCell component="th" scope="row">
-                  {row.assignment}
+                <TableCell align="center" component="th" scope="row">
+                  {row.firstName + " " + row.lastName}
                 </TableCell>
-                <TableCell>{row.totalMarks}</TableCell>
-                <TableCell>{row.startDate}</TableCell>
-                <TableCell>{row.endDate}</TableCell>
-                <TableCell><a href={row.websiteUrl}>demo</a></TableCell>
-                <TableCell><a href={''} onClick={() => {deleteAssignment(row.id)}} className="text-danger">delete</a></TableCell>
+                <TableCell align="center">{row.email}</TableCell>
+                <TableCell align="center">{row.phoneNo}</TableCell>
+                <TableCell align="center"><a href="" onClick={() => {viewStudentAssignments(row.id, row.firstName, row.lastName)}}>view</a></TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -130,7 +108,7 @@ export const Teacher = () => {
       </TableContainer>
       <div className="text-center">
         <Button className="m-5" variant="btn btn-warning" onClick={showAssignmnet}>Show Assignment</Button>
-        <Button className="m-5" variant="btn btn-warning" onClick={showStudentList}>Show Students</Button>
+        <Button className="m-5" variant="btn btn-success" onClick={showStudentList}>Show Students</Button>
         <Button className="m-5" variant="btn btn-secondary" onClick={showAddAssignmnet}>Add Assignment</Button>
       </div>
     </>
