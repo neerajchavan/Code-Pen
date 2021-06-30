@@ -15,6 +15,8 @@ export const ShowStudentAssignmentEditor = ({ match }) => {
   const [css, setCss] = useState('')
   const [js, setJs] = useState('')
   const [srcDoc, setSrcDoc] = useState('')
+  const [marks, setMarks] = useState(0)
+
   let userData = JSON.parse(localStorage.getItem("userData"));
   let studentId = match.params.sId;
   let assiId = match.params.aId;
@@ -22,7 +24,6 @@ export const ShowStudentAssignmentEditor = ({ match }) => {
   async function getCode() {
     
     let assignmentId = { id: parseInt(assiId) };
-    console.log("STUDENT ID : " + studentId)
     let student = { id: studentId }
     let sendBody = { student, assignmentId };
     
@@ -47,6 +48,7 @@ export const ShowStudentAssignmentEditor = ({ match }) => {
          setHtml(json.html);
          setCss(json.css);
          setJs(json.js);
+         setMarks(json.recievedMarks)
       }
     }
     catch(error){
@@ -57,6 +59,38 @@ export const ShowStudentAssignmentEditor = ({ match }) => {
   let logout = () => {
     localStorage.removeItem("userData");
     history.push('/');
+  }
+
+  async function saveMarks(){
+    console.log("Save Marks Student Marks : "+marks);
+
+    let assignmentId = { id: parseInt(assiId) };
+    let student = { id: studentId }
+    let sendBody = { student, assignmentId, recievedMarks:marks };
+    
+    sendBody = JSON.stringify(sendBody);
+    console.log("SEND CODE : " + sendBody);
+
+    try{
+      const response = await fetch('http://localhost:8080/save-marks', {
+        method: 'POST',
+        body: sendBody,
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      console.log("RESPONSE : " + response)
+      const json = await response.json();
+
+      console.log("RESPONSE STATUS : " + response.status);
+
+      if (response.status == 200) {
+         console.log("Marks Saved")
+      }
+    }
+    catch(error){
+      console.error("Exception Occurred At Save Marks " + error)
+    }
+
   }
 
   useEffect(() => {
@@ -90,6 +124,12 @@ export const ShowStudentAssignmentEditor = ({ match }) => {
             Signed in as: <a href="">{userData.firstName + " " + userData.lastName}</a>
           </Navbar.Text>
         </Navbar.Collapse>
+
+
+        <Navbar.Text className="mr-4">
+          <input type="text" placeholder="enter marks here" value={marks} onChange={e => {setMarks(e.target.value)}}/>
+          <a href="" onClick={saveMarks}><u className="h4">save marks</u></a>
+        </Navbar.Text>
 
         <Navbar.Text>
           <a href="" onClick={logout}>logout</a>

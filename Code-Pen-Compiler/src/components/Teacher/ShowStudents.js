@@ -107,9 +107,9 @@ export const ShowStudents = () => {
         </Table>
       </TableContainer>
       <div className="text-center">
-        <Button className="m-5" variant="btn btn-warning" onClick={showAssignmnet}>Show Assignment</Button>
         <Button className="m-5" variant="btn btn-success" onClick={showStudentList}>Show Students</Button>
         <Button className="m-5" variant="btn btn-secondary" onClick={showAddAssignmnet}>Add Assignment</Button>
+        <Button className="m-5" variant="btn btn-warning" onClick={showAssignmnet}>Show Assignment</Button>
       </div>
     </>
   );

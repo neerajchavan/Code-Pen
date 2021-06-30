@@ -29,11 +29,14 @@ export const ShowStudentAssignments = (props) => {
   let assignmentCounter = 1;
   let studentId = props.match.params.aId;
   let studentName = props.match.params.fname + " " + props.match.params.lname;
+  let [studentMarks, setStudentMarks] = useState([]);
 
   useEffect(() => {
     getRowData();
+    // getMarks();
     // console.log("PROPS : "+props.match.params.aId);
     // console.log("PROPS : "+JSON.stringify(props));
+    console.log("USE EFFECT OVER");
   }, [])
 
   async function getRowData() {
@@ -62,6 +65,51 @@ export const ShowStudentAssignments = (props) => {
     }
   }
 
+  async function getMarks() {
+    
+    let student = { id: studentId }
+    let sendBody = { student};
+    
+    sendBody = JSON.stringify(sendBody);
+    console.log("SEND CODE : " + sendBody);
+
+    try{
+      const response = await fetch('http://localhost:8080/get-marks', {
+        method: 'POST',
+        body: sendBody,
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      console.log("RESPONSE : " + response)
+      const json = await response.json();
+      console.log("JSON : " + JSON.stringify(json))
+
+      console.log("RESPONSE STATUS : " + response.status);
+
+      if (response.status == 200) {
+        console.log("Recived Student Marks")
+        let codeCopy = [];
+        json.map(item => codeCopy.push(item));
+        setStudentMarks(codeCopy);
+        console.log(studentMarks);
+      }
+    }
+    catch(error){
+      console.error("Exception Occurred At GetCode() " + error)
+    }
+  }
+
+  async function addingRecievedMarksInRows(){
+    console.log("ROWS LENGTH : "+rows.length)
+    let i;
+     for(i=0; i<rows.length; i++){
+      console.log("PRINT"+rows[i]);
+       rows[i].recivedMarks = 30;
+     }
+
+     console.log("AFTER ADDING MARKS : " + JSON.stringify(rows))
+  }
+
 
   let showAssignmnet = () => {
     console.log("Show Assignment Clicked")
@@ -86,6 +134,7 @@ export const ShowStudentAssignments = (props) => {
   return (
     <>
       <NavbarTeacher />
+      {studentMarks.map(item => console.log("STUDENT OBJJJJJJ : "+item.recievedMarks))}
       <h2 className="text-center text-dark m-5 font-weight-bolder">{studentName}'s Assignments</h2>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
@@ -94,7 +143,6 @@ export const ShowStudentAssignments = (props) => {
               <TableCell>No</TableCell>
               <TableCell align="center">Assignment</TableCell>
               <TableCell align="center">Total Marks</TableCell>
-              <TableCell align="center">Recieved Marks</TableCell>
               <TableCell align="center">Created Date</TableCell>
               <TableCell align="center">Submission Date</TableCell>
               <TableCell align="center">Details</TableCell>
@@ -108,11 +156,10 @@ export const ShowStudentAssignments = (props) => {
                 <TableCell>{assignmentCounter++}</TableCell>
                 <TableCell align="center">{row.assignment}</TableCell>
                 <TableCell align="center">{row.totalMarks}</TableCell>
-                <TableCell align="center">50</TableCell>
                 <TableCell align="center">{row.startDate}</TableCell>
                 <TableCell align="center">{row.endDate}</TableCell>
                 <TableCell align="center"><a href={row.websiteUrl}>demo</a></TableCell>
-                <TableCell align="center"><a href="" onClick={() => {showStudentAssignmentEditor(row.id, studentId)}}>view assignment</a></TableCell>
+                <TableCell align="center"><a href="" onClick={() => {showStudentAssignmentEditor(row.id, studentId)}}>view assignment</a></TableCell>     
               </TableRow>
             ))}
           </TableBody>
